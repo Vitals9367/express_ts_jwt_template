@@ -6,15 +6,28 @@ import db from './models';
 const port = 3000;
 const corsOptions = {origin: "http://localhost:3000"};
 
+import { users } from './seeders/users';
+
+const createUsers = () => {
+  users.map(user => {
+    db.User.create(user);
+  })
+}
+
 const startServer = async () => {
 
   try{
+    await db.sequelize.authenticate();
+    console.log(' -- Connection to database has been established successfully.');
+
     await db.sequelize.sync();
-    console.log('Database tables synced.');
+    console.log(' -- Database tables synced.');
 
   }catch (error){
     console.error('Database error:', error);
   }
+
+  createUsers();
 
   const app = express();
 
