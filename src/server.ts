@@ -9,9 +9,6 @@ const corsOptions = {origin: "http://localhost:3000"};
 const startServer = async () => {
 
   try{
-    await db.sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-
     await db.sequelize.sync();
     console.log('Database tables synced.');
 

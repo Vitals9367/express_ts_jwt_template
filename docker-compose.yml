@@ -7,6 +7,8 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=root
       - POSTGRES_DB=postgres
+    networks:
+      - backend
     ports:
       - 5432:5432
     volumes:
@@ -19,8 +21,14 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=user@user.user
       - PGADMIN_DEFAULT_PASSWORD=password
+    networks:
+      - backend
     ports:
-      - 80:80
+      - 5050:80
+
+networks:
+  backend:
+    driver: bridge
 
 volumes:
   database-data:

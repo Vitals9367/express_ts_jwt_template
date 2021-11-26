@@ -2,23 +2,18 @@
 
 import { readdirSync } from 'fs';
 import { basename as _basename, join } from 'path';
-import Sequelize, { DataTypes, Sequelize as connection } from 'sequelize';
+import Sequelize, { DataTypes } from 'sequelize';
 import config from '../config/db.config';
 
-type dbType = {
-  sequelize?: any,
-  Sequelize?: any,
-  
-}
-
 const basename = _basename(__filename);
-const db: dbType = {};
+const db: any = {};
 
-let sequelize;
-sequelize = new connection(config.CONNECTION_STRING);
+let sequelize: Sequelize.Sequelize;
+sequelize = new Sequelize.Sequelize(config.CONNECTION_STRING);
 
 readdirSync(__dirname)
   .filter(file => {
+    console.log(file)
     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.ts');
   })
   .forEach(file => {
