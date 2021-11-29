@@ -1,18 +1,14 @@
-import express from 'express';
+import express, { application } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import db from './models';
 
+import rootRouter from './routes';
+
 const port = 3000;
 const corsOptions = {origin: "http://localhost:3000"};
 
-import { users } from './seeders/users';
-
-const createUsers = () => {
-  users.map(user => {
-    db.User.create(user);
-  })
-}
+const app = express();
 
 const startServer = async () => {
 
@@ -27,23 +23,22 @@ const startServer = async () => {
     console.error('Database error:', error);
   }
 
-  createUsers();
-
-  const app = express();
-
+  // cors options
   app.use(cors(corsOptions));
+
   // parse requests of content-type - application/json
   app.use(bodyParser.json());
+
   // parse requests of content-type - application/x-www-form-urlencoded
   app.use(bodyParser.urlencoded({ extended: true }));
 
-  app.get('/', (req, res) => {
-    res.send('The sedulous hyena ate the antelope!');
-  });
+  // api routes
+  app.use('/api', rootRouter);
 
   app.listen(port, () => {
     return console.log(`server is listening on ${port}`);
   });
+
 }
 
 startServer();

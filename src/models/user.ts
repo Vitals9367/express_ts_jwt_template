@@ -1,7 +1,7 @@
 'use strict';
 
 import {
-  Model, UUIDV4,
+  Model, Sequelize, UUIDV4
 } from 'sequelize';
 
 interface UserAttributes {
@@ -11,7 +11,7 @@ interface UserAttributes {
   password: string;
 }
 
-module.exports = (sequelize: any, DataTypes: any) => {
+module.exports = (sequelize: Sequelize, DataTypes: any) => {
   class User extends Model<UserAttributes> implements UserAttributes{
     id!: string;
     name!: string;
