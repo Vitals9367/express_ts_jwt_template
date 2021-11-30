@@ -38,5 +38,5 @@ export const signup = async (req:express.Request, res:express.Response) => {
 };
 
 export const signin = (req:express.Request, res:express.Response) => {
-  return res.status(200).send({ message: "Signing in "})
+  return res.status(201).send({ message: "Signing in "})
 };

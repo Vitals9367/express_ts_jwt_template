@@ -1,18 +1,19 @@
-import express, { application } from 'express';
+import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import db from './models';
-
 import rootRouter from './routes';
 
 const port = 3000;
 const corsOptions = {origin: "http://localhost:3000"};
 
-const app = express();
+export const startServer = async () => {
 
-const startServer = async () => {
+  console.log(`Starting server on ${process.env.NODE_ENV.trim()} environment`);
 
   try{
+    console.log('Connecting to database!');
+
     await db.sequelize.authenticate();
     console.log(' -- Connection to database has been established successfully.');
 
@@ -22,6 +23,8 @@ const startServer = async () => {
   }catch (error){
     console.error('Database error:', error);
   }
+
+  const app = express();
 
   // cors options
   app.use(cors(corsOptions));
@@ -36,8 +39,10 @@ const startServer = async () => {
   app.use('/api', rootRouter);
 
   app.listen(port, () => {
-    return console.log(`server is listening on ${port}`);
+    return console.log(`Server is listening on ${port}`);
   });
+  
+  return app;
 
 }
 

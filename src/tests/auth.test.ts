@@ -2,9 +2,12 @@ import express from 'express';
 import chai, { expect } from 'chai';
 import request from 'supertest';
 
-const app = express();
+import {startServer} from '../server';
 
-describe('User Auth Tests', () => {
+process.env.NODE_ENV='test';
+const app = startServer();
+
+describe('User Auth Tests', async () => {
 
     const user = {
         email: 'dummy@email.test',

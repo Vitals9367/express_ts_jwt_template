@@ -5,11 +5,14 @@ import { basename as _basename, join } from 'path';
 import Sequelize, { DataTypes } from 'sequelize';
 import config from '../config/db.config';
 
+const env = process.env.NODE_ENV.trim() || 'dev';
+
 const basename = _basename(__filename);
 const db: any = {};
 
 let sequelize: Sequelize.Sequelize;
-sequelize = new Sequelize.Sequelize(config.CONNECTION_STRING);
+
+sequelize = new Sequelize.Sequelize(config[env].CONNECTION_STRING);
 
 readdirSync(__dirname)
   .filter(file => {
