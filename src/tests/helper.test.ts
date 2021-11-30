@@ -7,4 +7,9 @@ before((done) => {
     })
 })
 
+after((done) => {
+    console.log('\n\n\n================ TESTS ENDED ================\n')
+    done();
+})
+
 export default app;
