@@ -2,10 +2,12 @@ import express from 'express';
 import chai, { expect } from 'chai';
 import request from 'supertest';
 
-import {startServer} from '../server';
+import app from './helper.test';
+import db from '../models';
 
-process.env.NODE_ENV='test';
-const app = startServer();
+import { cleanDbTable } from '../utils/dbHelpers';
+
+const agent = request.agent(app);
 
 describe('User Auth Tests', async () => {
 
@@ -15,14 +17,40 @@ describe('User Auth Tests', async () => {
         password: 'chamber_of_secrets',
     }
 
+    it('Users table should be empty', async () => {
+
+        await cleanDbTable(db.User);
+        const users = await db.User.findAll();
+        expect(users).eql([]);
+    });
+
     it('It should signup new user', async () => {
 
-        await request(app)
+        const res = await agent
         .post('/api/user/signup')
-        .send(user)
-        .expect(202)
-        .then(res => {
-            expect(res.body.message).equal("User asdasdadasdadasdasdas asdasd successfully!");
-        });
+        .send(user);
+
+        expect(res.statusCode).equal(202);
+        expect(res.body.message).equal("User was registered successfully!");
     });
+
+    it('DB should have new user in User model', async () => {
+        
+        const newUser = await db.User.findOne({ where:{ email: user.email }})
+
+        expect(newUser).not.equal(undefined || null);
+        expect(newUser.email).equal(user.email);
+        expect(newUser.name).equal(user.name);
+    });
+
+    it('It should signin new user', async () => {
+
+        const res = await agent
+        .post('/api/user/signin')
+        .send({ email:user.email, password:user.password});
+
+        expect(res.statusCode).equal(202);
+        expect(res.body.message).equal("User logged in!");
+    });
+
 });

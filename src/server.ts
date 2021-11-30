@@ -1,49 +1,42 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import db from './models';
 import rootRouter from './routes';
+
+import { initDb } from './utils/dbHelpers';
 
 const port = 3000;
 const corsOptions = {origin: "http://localhost:3000"};
 
-export const startServer = async () => {
+console.log(`=============== Starting server on ${process.env.NODE_ENV.trim()} environment =============== \n\n`);
 
-  console.log(`Starting server on ${process.env.NODE_ENV.trim()} environment`);
+const app = express();
 
-  try{
-    console.log('Connecting to database!');
+// cors options
+app.use(cors(corsOptions));
 
-    await db.sequelize.authenticate();
-    console.log(' -- Connection to database has been established successfully.');
+// parse requests of content-type - application/json
+app.use(bodyParser.json());
 
-    await db.sequelize.sync();
-    console.log(' -- Database tables synced.');
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
 
-  }catch (error){
-    console.error('Database error:', error);
-  }
+// api routes
+app.use('/api', rootRouter);
 
-  const app = express();
-
-  // cors options
-  app.use(cors(corsOptions));
-
-  // parse requests of content-type - application/json
-  app.use(bodyParser.json());
-
-  // parse requests of content-type - application/x-www-form-urlencoded
-  app.use(bodyParser.urlencoded({ extended: true }));
-
-  // api routes
-  app.use('/api', rootRouter);
+initDb()
+.then(() =>{
 
   app.listen(port, () => {
-    return console.log(`Server is listening on ${port}`);
+    console.log(`----> Server started! \n      PORT: ${port} \n      ENV: ${process.env.NODE_ENV.trim()} \n`);
+    app.emit('appStarted');
   });
-  
-  return app;
 
-}
+})
+.catch((err) => {
+  return console.log(`\n ----> Failed to initialize database: ${err}`);
+})
 
-startServer();
+
+export default app;
+
