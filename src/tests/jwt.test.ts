@@ -1,11 +1,6 @@
 import express from 'express';
 import chai, { expect } from 'chai';
-import request from 'supertest';
-
-import app from './helper.test';
 import { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } from '../services/jwtService';
-
-const agent = request.agent(app);
 
 describe('Access token tests', async () => {
     let access_token = '';
