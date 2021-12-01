@@ -1,10 +1,9 @@
 import express from "express";
-import db from "../models";
+import { getAllUsers } from "../services/userService";
 
-const User = db.User;
 
-export const getAllUsers = async (req:express.Request, res:express.Response) => {
+export const getAll = async (req:express.Request, res:express.Response) => {
 
-    const users = await User.findAll();
+    const users = getAllUsers();
     return res.status(200).send({users});
 };
