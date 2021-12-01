@@ -6,6 +6,7 @@ import config from "../config/auth.config";
 
 import fieldsMissing from '../utils/fieldHelpers';
 import { comparePassword, hashPassword } from "../services/authService";
+import { generateAccessToken, generateRefreshToken} from '../services/jwtService';
 
 const User = db.User;
 
@@ -15,10 +16,10 @@ export const signup = async (req:express.Request, res:express.Response) => {
 
   const fields = ['name','email','password'];
 
-  const missingField = fieldsMissing(fields,req.body);
+  const missing_field = fieldsMissing(fields,req.body);
 
   if(req.userExists) return res.status(403).send({ message: `Email already exists!` });
-  if(missingField) return res.status(403).send({ message: `${missingField} field is missing!` });
+  if(missing_field) return res.status(403).send({ message: `${missing_field} field is missing!` });
 
   try {
     await User.create({
@@ -26,7 +27,15 @@ export const signup = async (req:express.Request, res:express.Response) => {
         email: req.body.email,
         password: await hashPassword(req.body.password),
       })
-      return res.status(202).send({ message: "User was registered successfully!" });
+
+      const access_token = generateAccessToken({email: req.body.name, name: req.body.email});
+      const refresh_token = generateRefreshToken({email: req.body.name, name: req.body.email});
+  
+      //days * hours * minutes * seconds *
+      const max_age = 31 * 24 * 60 * 60 * 1000
+  
+      res.cookie('refresh-token',refresh_token,{maxAge: max_age, httpOnly:true});
+      return res.status(202).send({ message: "User was registered successfully!", access_token });
       
   }catch (error){
     return res.status(500).send({ message: "Server Error: " + error})
@@ -37,19 +46,25 @@ export const signin = async (req:express.Request, res:express.Response) => {
 
   const fields = ['email','password'];
 
-  const missingField = fieldsMissing(fields,req.body);
+  const missing_field = fieldsMissing(fields,req.body);
 
-  if(missingField) return res.status(403).send({ message: `${missingField} field is missing!` });
+  if(missing_field) return res.status(403).send({ message: `${missing_field} field is missing!` });
   if(!req.userExists) return res.status(404).send({ message: `User does not exist!` });
 
   try{
     const user = await db.User.findOne({where:{ email:req.body.email }})
     if(!await comparePassword(req.body.password, user.password)) return res.status(401).send({ message: `User credentials wrong!` });
     
+    const access_token = generateAccessToken({email: user.email, name: user.name});
+    const refresh_token = generateRefreshToken({email: user.email, name: user.name});
+
+    //days * hours * minutes * seconds *
+    const max_age = 31 * 24 * 60 * 60 * 1000
+
+    res.cookie('refresh-token',refresh_token,{maxAge: max_age, httpOnly:true});
+    return res.status(202).send({ message: `User logged in!`, access_token});
+ 
   }catch(err){
     return res.status(500).send({ message: "Server Error: " + err})
   }
-
-  return res.status(202).send({ message: `User logged in!` });
-
 };
