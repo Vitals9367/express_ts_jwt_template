@@ -24,7 +24,7 @@ export const signup = async (req:express.Request, res:express.Response) => {
     await User.create({
         name: req.body.name,
         email: req.body.email,
-        password: hashPassword(req.body.password),
+        password: await hashPassword(req.body.password),
       })
       return res.status(202).send({ message: "User was registered successfully!" });
       
@@ -44,7 +44,7 @@ export const signin = async (req:express.Request, res:express.Response) => {
 
   try{
     const user = await db.User.findOne({where:{ email:req.body.email }})
-    if(!comparePassword(req.body.password, user.password)) return res.status(401).send({ message: `User credentials wrong!` });
+    if(!await comparePassword(req.body.password, user.password)) return res.status(401).send({ message: `User credentials wrong!` });
     
   }catch(err){
     return res.status(500).send({ message: "Server Error: " + err})

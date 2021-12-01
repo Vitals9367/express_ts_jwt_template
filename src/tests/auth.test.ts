@@ -6,8 +6,25 @@ import app from './helper.test';
 import db from '../models';
 
 import { cleanDbTable } from '../utils/dbHelpers';
+import { comparePassword, hashPassword } from '../services/authService';
 
 const agent = request.agent(app);
+
+describe('Password Hashing Tests', async () => {
+
+    it('It should hash the password correctly', async () => {
+        const user = {
+            email: 'dummy@email.test',
+            name: 'you got tested',
+            password: 'chamber_of_secrets',
+        }
+    
+        const hashedPassword = await hashPassword(user.password);
+        
+        expect(await comparePassword(user.password,hashedPassword)).equal(true);
+    })
+
+});
 
 describe('User Auth Tests', async () => {
 
