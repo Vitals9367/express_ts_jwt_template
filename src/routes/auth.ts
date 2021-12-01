@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/', (req:express.Request, res:express.Response) => {
     res.status(200).send({message: 'auth controller'});
 });
-router.post('/signin', [emailExists], signin);
-router.post('/signup', [emailExists], signup);
+router.post('/signin', signin);
+router.post('/signup', signup);
 
 export default router;
