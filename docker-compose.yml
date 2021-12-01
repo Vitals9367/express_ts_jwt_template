@@ -26,6 +26,15 @@ services:
     ports:
       - 5050:80
 
+  api:
+    depends_on:
+      - postgres
+    build: .
+    networks:
+      - backend
+    ports:
+      - 80:3000
+
 networks:
   backend:
     driver: bridge

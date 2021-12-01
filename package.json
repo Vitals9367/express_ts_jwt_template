@@ -4,8 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "SET NODE_ENV=dev && tsnd --respawn src/server.ts",
-    "test": "SET NODE_ENV=test && mocha -w -r ts-node/register src/tests/*.test.ts",
+    "dev": "tsnd --respawn src/server.ts",
+    "test": "mocha -w -r ts-node/register src/tests/*.test.ts",
+    "build": "tsc",
     "coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" npm run test"
   },
   "author": "",
