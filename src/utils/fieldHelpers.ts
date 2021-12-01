@@ -1,4 +1,4 @@
-const fieldsMissing = (fields:string[],source: any) => {
+const fieldsMissing = (fields:string[],source: any):string | null => {
 
     for(let i = 0;i < fields.length; i++){
         
