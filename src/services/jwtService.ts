@@ -17,10 +17,10 @@ export const generateAccessToken = ({name, email}:IGenerateAccessToken): string 
     }
 }
 
-export const generateRefreshToken = async ({name, email}:IGenerateAccessToken): Promise<string> => {
+export const generateRefreshToken = ({name, email}:IGenerateAccessToken): string => {
     try{
         const expires_in = '30d';
-        const refresh_token = jwt.sign({ name, email }, config.ACCESS_TOKEN_SECRET, { expiresIn: expires_in });
+        const refresh_token = jwt.sign({ name, email }, config.REFRESH_TOKEN_SECRET, { expiresIn: expires_in });
 
         return refresh_token;
     }catch(err){

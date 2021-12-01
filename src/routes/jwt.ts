@@ -1,9 +1,9 @@
 import express from 'express';
-import verifyToken from '../middleware/jwt';
-//import {verifyAccessToken as verifyTokenController} from '../controllers/jwt.controller';
+import {verifyAccess, verifyRefresh} from '../controllers/jwt.controller';
 
 const router = express.Router();
 
-//router.post('/verify-access-token',[verifyToken],verifyTokenController)
+router.post('/verify-access-token', verifyAccess);
+router.post('/verify-refresh-token', verifyRefresh);
 
 export default router;

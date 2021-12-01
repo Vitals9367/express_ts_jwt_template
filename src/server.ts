@@ -13,14 +13,14 @@ console.log(`=============== Starting server on ${process.env.NODE_ENV.trim()} e
 
 const app = express();
 
+// parse cookies
+app.use(cookieParser());
+
 // cors options
 app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
-
-// parse cookies
-app.use(cookieParser());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));

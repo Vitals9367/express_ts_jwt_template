@@ -1,25 +1,47 @@
 import express from "express";
 import jwt from "jsonwebtoken";
-import config from "../config/auth.config";
+import config from "../config/jwt.config";
 
-const verifyToken = (req:express.Request, res:express.Response, next:express.NextFunction) => {
-  let token = req.headers["x-access-token"];
+const checkAccessToken = (req:express.Request, res:express.Response, next:express.NextFunction) => {
+  const access_token = req.headers.authorization.split(" ")[1];
 
-  if (!token) {
+  if (!access_token) {
     return res.status(403).send({
-      message: "No token provided!"
+      message: "No access token provided!"
     });
   }
 
-  jwt.verify(token[0], config.SECRET, (err, decoded) => {
+  jwt.verify(access_token, config.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
       return res.status(401).send({
         message: "Unauthorized!"
       });
     }
-    req.body.userId = decoded.id;
+    req.body.name = decoded.name;
+    req.body.email = decoded.email;
     next();
   });
 };
 
-export default verifyToken;
+const checkRefreshToken = (req:express.Request, res:express.Response, next:express.NextFunction) => {
+  const refresh_token = req.cookies['refresh-token'];
+
+  if (!refresh_token) {
+    return res.status(403).send({
+      message: "No refresh token provided!"
+    });
+  }
+
+  jwt.verify(refresh_token, config.REFRESH_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).send({
+        message: "Unauthorized!"
+      });
+    }
+    req.body.name = decoded.name;
+    req.body.email = decoded.email;
+    next();
+  });
+};
+
+export {checkAccessToken, checkRefreshToken};
