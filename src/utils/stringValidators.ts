@@ -13,7 +13,7 @@ export const validateEmail = (email:string) => {
 
     const parts = email.split("@");
 
-    if(parts.length > 2)
+    if(parts.length != 2)
         return false;
     
     if(!parts[1].includes('.'))
