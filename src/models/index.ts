@@ -16,7 +16,7 @@ sequelize = new Sequelize.Sequelize(config[env].CONNECTION_STRING);
 
 readdirSync(__dirname)
   .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.ts');
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.includes('.map') == false) && (file.slice(-3) === '.js');
   })
   .forEach(file => {
     const model = require(join(__dirname, file))(sequelize, DataTypes);
